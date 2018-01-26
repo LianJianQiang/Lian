@@ -1,23 +1,20 @@
-var React = require('react');
-var CodeMirror = require('react-codemirror');
+import React from 'react';
+import {render} from 'react-dom';
+import {Provider} from 'react-redux';
+import {AppContainer} from 'react-hot-loader';
+import 'antd/dist/antd.css';
 
-var App = React.createClass({
-    getInitialState: function() {
-        return {
-            code: "// Code",
-        };
-    },
-    updateCode: function(newCode) {
-        this.setState({
-            code: newCode,
-        });
-    },
-    render: function() {
-        var options = {
-            lineNumbers: true,
-        };
-        return <CodeMirror value={this.state.code} onChange={this.updateCode} options={options} />
-    }
-});
+import configureStore from 'store/configureStore';
+import Root from 'store/Roots';
 
-React.render(<App />, document.getElementById('app'));
+let store = configureStore();
+
+render(
+    <AppContainer>
+        <Provider store={store}>
+            <Root/>
+        </Provider>
+    </AppContainer>,
+    document.getElementById('app')
+);
+

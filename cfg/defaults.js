@@ -1,4 +1,3 @@
-
 'use strict';
 
 const path = require('path');
@@ -7,11 +6,11 @@ const chalk = require('chalk');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const autoPrefixer = require('autoprefixer');
+// const autoPrefixer = require('autoprefixer');
 const HappyPack = require('happypack');
 
 const srcPath = path.join(__dirname, '/../app');
-const theme = require('../antdtheme');
+// const theme = require('../antdtheme');
 
 const happyThreadPool = HappyPack.ThreadPool({size: 5});
 
@@ -22,13 +21,9 @@ function getDefaultModules() {
             {
                 test: /\.(js|jsx)$/,
                 include: srcPath,
-                enforce: "pre",
+                enforce: 'pre',
+                exclude: '/node_modules/',
                 loader: 'eslint-loader'
-            }, {
-                test: /\.html$/,
-                include: srcPath,
-                enforce: "pre",
-                loader: 'htmlhint'
             }, {
                 test: /\.css$/,
                 use: [
@@ -59,7 +54,7 @@ function getDefaultModules() {
                             data: '@import "styles/core/variables";'
                         }
                     }
-                ],
+                ]
             }, {
                 test: /\.scss/,
                 use: [
@@ -84,7 +79,7 @@ function getDefaultModules() {
                             data: '@import "styles/core/variables";'
                         }
                     }
-                ],
+                ]
             }, {
                 test: /\.less/,
                 exclude: /node_modules/,
@@ -97,7 +92,7 @@ function getDefaultModules() {
                 test: /\.less/,
                 include: /node_modules/,
                 use: ExtractTextPlugin.extract({
-                    use: "happypack/loader?id=antd-css"
+                    use: 'happypack/loader?id=antd-css'
                 })
             }, {
                 test: /\.html/,
@@ -112,7 +107,7 @@ function getDefaultModules() {
                 }
             }, {
                 test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: "file-loader"
+                loader: 'file-loader'
             }, {
                 test: /\.(png|jpg|gif|webp)$/,
                 loader: 'url-loader',
@@ -133,74 +128,22 @@ function getDefaultModules() {
  */
 function getDefaultPlugins() {
     return [
-        new webpack.LoaderOptionsPlugin({
-            options: {
-                context: path.join(__dirname, '/../'),
-                debug: true,
-                // 关闭自动补齐浏览器样式前缀的功能
-                // postcss: [
-                //   autoPrefixer(),
-                // ],
-                htmlhint: {
-                    configFile: './.htmlhintrc'
-                },
-            }
-        }),
         new webpack.DllReferencePlugin({
-            context: path.join(__dirname, '/../'),
-            manifest: require('../manifest.json'),
-        }),
-        new ExtractTextPlugin({
-            filename: 'antd.css',
-            disable: false,
-            allChunks: true
+            context: __dirname,
+            manifest: require('../dist/dev/vendor-manifest.json')
         }),
         new ProgressBarPlugin({
             width: 50,
             format: chalk.magenta.bold('build bundle process ') + chalk.cyan.bold(':percent') + chalk.yellow.bold(' (:elapsed seconds)'),
             clear: false
         }),
-        new CopyWebpackPlugin([{
-            from: 'app/styles/core/themes/*.css',
-            to: 'themes/[name].[ext]'
-        }, {
-            from: 'app/styles/core/tools/iconfont/antfont',
-            to: 'antfont'
-        }, {
-            from: 'build/lib.js',
-            to: ''
-        }, {
-            from: 'app/_config/dist/api.js',
-            to: ''
-        }, {
-            from: 'app/images/icons',
-            to: 'icons'
-        }, {
-            from: 'charting_library',
-            to: 'charting_library'
-        }]),
-        new HappyPack({
-            id: 'antd-css',
-            loaders: [{
-                path: 'css-loader',
-                query: {
-                    url: false
-                }
-            }, {
-                path: 'less-loader',
-                query: {
-                    sourceMap: true,
-                    modifyVars: theme
-                }
-            }],
-            threadPool: happyThreadPool
-        })
-    ]
+        new CopyWebpackPlugin([])
+    ];
 }
 
 module.exports = {
     srcPath: srcPath,
-    publicPath: '/assets/',
+    publicPath: '/',
     getDefaultModules,
     getDefaultPlugins,
     happyThreadPool

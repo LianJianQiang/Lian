@@ -2,26 +2,31 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const htmlWebpackPlugin = require('html-webpack-plugin');
 
 const baseConfig = require('./base');
 const defaultSettings = require('./defaults');
 
-// Add needed plugins here
-// const BowerWebpackPlugin = require('bower-webpack-plugin');
 const HappyPack = require('happypack');
 
 let config = Object.assign({}, baseConfig, {
-    entry: [
-        'babel-polyfill',
-        path.join(__dirname, '../app/index')
-    ],
     cache: false,
     devtool: 'source-map',
     plugins: defaultSettings.getDefaultPlugins().concat([
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': '"production"'
         }),
-        new webpack.optimize.UglifyJsPlugin({
+        new htmlWebpackPlugin({
+            title: '自诊工具',
+            hash: true,
+            template: defaultSettings.srcPath + '/index.html',
+            minify: {
+                removeComments: true,
+                collapseWhitespace: true,
+                removeAttributeQuotes: true
+            }
+        }),
+        new webpack.optimize.UglifyJsPlugin({   // 代码压缩
             sourceMap: true,
             // 最紧凑的输出
             beautify: false,
@@ -36,11 +41,11 @@ let config = Object.assign({}, baseConfig, {
                 // 内嵌定义了但是只用到一次的变量
                 collapse_vars: true,
                 // 提取出出现多次但是没有定义成变量去引用的静态值
-                reduce_vars: true,
+                reduce_vars: true
             }
         }),
         new webpack.optimize.AggressiveMergingPlugin(),
-        new webpack.NoEmitOnErrorsPlugin(),
+        new webpack.NoEmitOnErrorsPlugin()     // 在编译出现错误时，使用 NoEmitOnErrorsPlugin 来跳过输出阶段。这样可以确保输出资源不会包含错误
     ]),
     module: defaultSettings.getDefaultModules()
 });

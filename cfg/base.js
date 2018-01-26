@@ -4,9 +4,12 @@ let defaultSettings = require('./defaults');
 
 module.exports = {
     devtool: 'eval',
+    entry: [
+        defaultSettings.srcPath + '/index.js'
+    ],
     output: {
-        path: path.join(__dirname, '/../dist/assets'),
-        filename: 'app.js',
+        path: path.join(__dirname, '/../dist/'),
+        filename: '[name].js',
         publicPath: `.${defaultSettings.publicPath}`
     },
     devServer: {
@@ -28,17 +31,19 @@ module.exports = {
             chunks: false,
             chunkModules: true,
             children: false
-        },
-    },
-    resolve: {
-        modules: [path.join(__dirname, '/../node_modules')],
-        extensions: ['.js', '.jsx'],
-        alias: {
-            'common': `${defaultSettings.srcPath}/common/`,
-            'components': `${defaultSettings.srcPath}/components/`,
-            'containers': `${defaultSettings.srcPath}/containers/`,
-            'static': `${defaultSettings.srcPath}/static/`,
-            'utils': `${defaultSettings.srcPath}/utils/`
         }
     },
+    resolve: {
+        extensions: ['.js', '.css', '.jsx', '.less', '.scss'],
+        alias: {
+            common: `${defaultSettings.srcPath}/common/`,
+            components: `${defaultSettings.srcPath}/components/`,
+            containers: `${defaultSettings.srcPath}/containers/`,
+            modules: `${defaultSettings.srcPath}/modules/`,
+            routers: `${defaultSettings.srcPath}/routers/`,
+            store: `${defaultSettings.srcPath}/store/`,
+            static: `${defaultSettings.srcPath}/static/`,
+            utils: `${defaultSettings.srcPath}/utils/`
+        }
+    }
 };
